@@ -1,4 +1,4 @@
-﻿var UA = (function(){
+var UA = (function(){
 	var ua = navigator.userAgent,
 		isIE = /msie/i.test(ua),
 		isIElt9 = (!-[1,]),
@@ -72,7 +72,9 @@ var isDOMs = function(target){
 	 * 使用：$tag(tag[属性=属性名],父级元素); //父级元素可省略，支持写上[属性=属性名]附加属性过滤
 	 */
 	win.$tag = function(tagName){
-		var parent = arguments[1] || document;  //参数2，父级元素
+		var parent = arguments[1]
+		if(parent == null) return; //参数2为父级。如传入的父级返回为null，则不用查找了。
+		if(parent == undefined) parent = document; //如无传入父级（参数为undefined），则用document
 			// 匹配"span"=>span; "span[name]" => span, name; "span[name=me]" => span, name, me; 
 			tagName = tagName.match(/^([^\[\]]+)\[?([^=\]]*)=?([^\]]*)\]?$/);
 
@@ -152,6 +154,40 @@ var isDOMs = function(target){
 			remove(target);
 		}
 	}
+	
+	/*
+	 * cookie
+	 */
+	win.getcookie = function(name) {
+		var cookie = document.cookie,
+			cookie_start = cookie.indexOf(name),
+			cookie_end = cookie.indexOf(";", cookie_start);
+		return cookie_start == -1 ? '' : unescape(cookie.substring(cookie_start + name.length + 1, (cookie_end > cookie_start ? cookie_end : document.cookie.length)));
+	};
+	win.setcookie = function(cookieName, cookieValue, config) {
+		var opt = {
+			expires : "",
+			path : "/",
+			domain : "",
+			secure : ""
+		};
+		extendCopy(config,opt);
+	
+		if(opt.expires){
+			var ltime = new Date();
+				ltime.setTime(ltime.getTime() + opt.expires);
+			opt.expires = ltime.toGMTString();
+		}
+		if(opt.secure){
+			opt.secure = "secure";
+		}
+		
+		document.cookie = escape(cookieName) + '=' + escape(cookieValue)
+		+ (';expires=' + opt.expires)
+		+ (';path=' + opt.path)
+		+ (';domain=' +  opt.domain)
+		+ opt.secure;
+	};
 
 	/* 兼容ie6/7 的JSON方法 */
 	if (!win.JSON) {
