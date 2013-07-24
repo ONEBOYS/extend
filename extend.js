@@ -72,9 +72,9 @@ var isDOMs = function(target){
 	 * 使用：$tag(tag[属性=属性名],父级元素); //父级元素可省略，支持写上[属性=属性名]附加属性过滤
 	 */
 	win.$tag = function(tagName){
-		var parent = arguments[1]
-		if(parent == null) return; //参数2为父级。如传入的父级返回为null，则不用查找了。
-		if(parent == undefined) parent = document; //如无传入父级（参数为undefined），则用document
+		var parent = arguments[1];
+		if(typeof(parent) == "null") return; //参数2为父级。如传入的父级返回为null，则不用查找了。
+		if(typeof(parent) == "undefined") parent = document; //如无传入父级（参数为undefined），则用document
 			// 匹配"span"=>span; "span[name]" => span, name; "span[name=me]" => span, name, me; 
 			tagName = tagName.match(/^([^\[\]]+)\[?([^=\]]*)=?([^\]]*)\]?$/);
 
@@ -320,14 +320,11 @@ events._delegateHandle = function(obj,elm,fn){
 		var target = event.srcElement || event.target;
 		var parent = target;
 
-		function contain(item,list){
-			/* item对象是否就是list对象 */
-			if(list.length == undefined ) return (item === list);
-			
-			/* item对象是否是list对象数组中的一个 */
-			for(var i=0, l = list.length; i < l; i++){
-				if(item === list[i]) return true;
-			}
+		function contain(item,elmName){
+			if(item.tagName == elmName.toUpperCase()
+				|| item.id && item.id === elmName.split('#')[1] 
+				|| hasClass(item, elmName.split('.')[1])
+			) return true;
 			return false;
 		}
 
@@ -340,8 +337,8 @@ events._delegateHandle = function(obj,elm,fn){
 					*/
 					//事件相关元素。ie下使用toElement和fromElement，其他用relatedTarget。
 					var related = event.relatedTarget || ((event.type == 'mouseout') ? event.toElement : event.fromElement); 
-					if(contain(target,elm) && contain(related,elm)) {
-						/* 如果，触发元素和相关元素都属于绑定元素(elm)。执行方法 */
+					if(contain(target,elm) || contain(related,elm)) {
+						/* 如果，触发元素或相关元素属于绑定元素(elm)。执行方法 */
 						fn.call(obj,event);
 						return;
 					}
@@ -356,6 +353,7 @@ events._delegateHandle = function(obj,elm,fn){
 				return;
 			}
 			parent = parent.parentNode;	
+			if(obj == parent) return false;
 		}
 	};
 	return func;
@@ -453,7 +451,7 @@ events.delegate = function(obj,elm,type,fn){
 };
 
 events.undelegate = function(obj,elm,type,fn){
-	if (!obj || !elm) return false;
+	if (!obj || !elm || !events._deleFn[elm]) return false;
 	var fnNew = events._deleFn[elm][type][fn];
 	if(!fnNew) return;
 	events.removeEvent(obj,type,fnNew);
