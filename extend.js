@@ -18,7 +18,7 @@ var isDOMs = function(target){
 	// return (targetType === "[object HTMLCollection]" || 
 	// targetType === "[object NodeList]" || 
 	// targetType === "[object Array]");
-	return target.length && target !== window && target.tagName != "select";
+	return target.length && target !== window && target.tagName != "FORM" && target.tagName != "select";
 };
 
 (function(win){
