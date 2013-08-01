@@ -272,27 +272,27 @@ var isDOMs = function(target){
 
 /* 浅拷贝 */
 function extendCopy(p, c) {
-　　　　var c = c || {};
-　　　　for (var i in p) { 
-　　　　　　c[i] = p[i];
-　　　　}
-　　　　c.uber = p;
-　　　　return c;
-　　}
+	var c = c || {};
+	for (var i in p) { 
+		c[i] = p[i];
+	}
+	c.uber = p;
+	return c;
+}
 
 /* 深拷贝*/
 function deepCopy(p, c) {
-　　　　var c = c || {};
-　　　　for (var i in p) {
-　　　　　　if (typeof p[i] === 'object') {
-　　　　　　　　c[i] = (p[i].constructor === Array) ? [] : {};
-　　　　　　　　deepCopy(p[i], c[i]);
-　　　　　　} else {
-　　　　　　　　　c[i] = p[i];
-　　　　　　}
-　　　　}
-　　　　return c;
-　　}
+	var c = c || {};
+	for (var i in p) {
+		if (typeof p[i] === 'object') {
+			c[i] = (p[i].constructor === Array) ? [] : {};
+			deepCopy(p[i], c[i]);
+		} else {
+			c[i] = p[i];
+		}
+	}
+	return c;
+}
 
 /* 
 *  事件方法扩展：
@@ -366,11 +366,10 @@ events._delegateHandle = function(obj,elm,fn){
 	return func;
 };
 
-events.addEvent = function(target,type,fn ) {
+events.addEvent = function(target,type,fn ){
 	if (!target) return false;
 	var add = function(obj){
-		if(obj.addEventListener)
-	    {	
+		if(obj.addEventListener){	
 			if(obj.onmouseenter !== undefined){
 				//for opera11，firefox10。他们也支持“onmouseenter”和“onmouseleave”，可以直接绑定
 				obj.addEventListener(type,fn,false);  
@@ -387,7 +386,7 @@ events.addEvent = function(target,type,fn ) {
 			}else{
 				obj.addEventListener(type,fn,false);
 			}
-	    }else{
+		}else{
 			// for ie ，弃用attachEvent
 			var ieType = "_" + type;
 			if(!obj[ieType]){
@@ -404,7 +403,7 @@ events.addEvent = function(target,type,fn ) {
 					this[ieType][i].apply(this,arguments);
 				};
 			}	
-	    }
+		}
 	}
 	if(isDOMs(target)) {
 		for(var i=0, l = target.length; i < l; i++){
@@ -418,8 +417,7 @@ events.addEvent = function(target,type,fn ) {
 events.removeEvent = function(target,type,fn ) {
 	if (!target) return false;
     var remove = function(obj){
-    	if(obj.addEventListener)
-	    {	
+    	if(obj.addEventListener){	
 			if(obj.onmouseenter !== undefined){
 				obj.removeEventListener(type,fn,false);  
 				return ;
@@ -432,11 +430,10 @@ events.removeEvent = function(target,type,fn ) {
 			}else{
 				obj.removeEventListener(type,fn,false);
 			}
-	    }
-	    else{
+		}else{
 			if (!obj || !obj["_"+type]) return false;
 			obj["_"+type].Remove(fn);
-	    }
+		}
     }
     if(isDOMs(target)) {
 		for(var i=0, l = target.length; i < l; i++){
