@@ -119,7 +119,7 @@ var isDOMs = function(target){
 	 *addClass & removeClass方法
 	 */
 	win.hasClass = function(target,className){
-		if(!target) return false;
+		if(!target || !className) return false;
 		if(target[0]) target = target[0];
 		var pattern = new RegExp("(^|\\s)"+className+"(\\s|$)");
 		return pattern.test(target.className);
@@ -328,15 +328,19 @@ events._delegateHandle = function(obj,elm,fn){
 		var parent = target;
 
 		function contain(item,elmName){
-			if(item.tagName == elmName.toUpperCase()
-				|| item.id && item.id === elmName.split('#')[1] 
-				|| hasClass(item, elmName.split('.')[1])
-			) return true;
+			if(elmName.split('#')[1]){ //by id
+				if(item.id && item.id === elmName.split('#')[1]) return true;
+			} 
+			if(elmName.split('.')[1]){ //by class
+				if(hasClass(item, elmName.split('.')[1])) return true;
+			}
+			if(item.tagName == elmName.toUpperCase())  return true; //by tagname
 			return false;
 		}
 
 		while(parent){
 			/* 如果触发的元素，属于绑定元素(elm)的子级。 */
+			if(obj == parent) return false; //触发元素是自己
 			if(contain(parent,elm)){
 				if(event.type == 'mouseover' || event.type == 'mouseout'){
 					/* 
@@ -360,7 +364,6 @@ events._delegateHandle = function(obj,elm,fn){
 				return;
 			}
 			parent = parent.parentNode;	
-			if(obj == parent) return false;
 		}
 	};
 	return func;
