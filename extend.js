@@ -407,10 +407,11 @@ events.addEvent = function(target,type,fn ){
 			}
 			obj[ieType].push(fn);
 			obj["on"+type] = function(){
+				var _bind = null;
 				for (var i = this[ieType].length - 1; i >= 0; i--) {
-					this[ieType][i].apply(this,arguments);
+					_bind = this[ieType][i].apply(this,arguments);
+					if(_bind !== undefined) return _bind;  //若绑定的方法有return（非undefined），则return出去
 				};
-				if(obj !== window) return false;
 			}	
 		}
 	}
