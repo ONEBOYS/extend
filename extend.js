@@ -29,6 +29,11 @@ var isDOMs = function(target){
 };
 
 (function(win){
+	var t = new Date();
+	win.random= function(){
+		//当前页面唯一数
+		return t++;
+	}
 	/*
 	* 一些操作DOM的方法兼容。置于window对象下
 	*/
@@ -436,6 +441,7 @@ events.removeEvent = function(target,type,fn ) {
 		}else{
 			if (!obj || !obj["_"+type]) return false;
 			obj["_"+type].Remove(fn);
+			return false;
 		}
     }
     if(isDOMs(target)) {
