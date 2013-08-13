@@ -410,6 +410,7 @@ events.addEvent = function(target,type,fn ){
 				for (var i = this[ieType].length - 1; i >= 0; i--) {
 					this[ieType][i].apply(this,arguments);
 				};
+				if(obj !== window) return false;
 			}	
 		}
 	}
@@ -441,7 +442,6 @@ events.removeEvent = function(target,type,fn ) {
 		}else{
 			if (!obj || !obj["_"+type]) return false;
 			obj["_"+type].Remove(fn);
-			return false;
 		}
     }
     if(isDOMs(target)) {
