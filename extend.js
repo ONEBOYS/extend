@@ -242,11 +242,9 @@ var isDOMs = function(target){
 	  };
 	}
 	
-	 if (!win.$jsonp) {
+	  if (!win.$jsonp) {
 		//jsonp的具体实现
-	  	var randomNum = (new Date).getTime(),
-	  		callName = null,
-	  		sendScriptRequest = function(url,id){
+	  	var sendScriptRequest = function(url,id){
 	  			//将请求地址以script标签形式插入到页面。（注定是GET请求）
 		        var head = document.getElementsByTagName("head")[0];
 		        var script = document.createElement("script");
@@ -257,25 +255,26 @@ var isDOMs = function(target){
 		    },
 		    buildTempFunction = function(callback){
 		    	//创建一个全局方法，并将方法名当做请求地址的一个参数
-		        callName = "jsonp" + randomNum++;
+		        var callName = "jsonp" + win.random();
 		        window[ callName ] = function(data){
 		            callback(data);
 		            window[ callName ] = undefined;
 		            try{ 
 		            	delete window[ callName ]; 
-		            	//var jsNode = document.getElementById(callName); 
-		            	//jsNode.parentElement.removeChild(jsNode);  //执行全局方法后，将script标签删除
+		            	var jsNode = document.getElementById(callName); 
+		            	jsNode.parentElement.removeChild(jsNode);  //执行全局方法后，将script标签删除
 		            } catch(e){}
 		        };
 		        return callName;
 		    };
-	    win.$jsonp = function(url,params){
+	    win.$jsonp = function(url,data,callback){
 	    	//生成GET请求地址
-	  		params.callback = buildTempFunction(params.callback);
+	  		callback = buildTempFunction(callback);
 	  		url += (url.indexOf("?")>0 ) ? "" : "?" ;
-	  		for(var i in params)
-	  			url += "&" + i + "=" + params[i];
-		    sendScriptRequest(url,callName);
+	  		for(var i in data)
+	  			url += "&" + i + "=" + data[i];
+			url += "&callback="  + callback;
+		    sendScriptRequest(url,callback);
 	  	};
 	 }
 	
@@ -288,7 +287,6 @@ function extendCopy(p, c) {
 	for (var i in p) { 
 		c[i] = p[i];
 	}
-	c.uber = p;
 	return c;
 }
 
