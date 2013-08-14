@@ -25,7 +25,14 @@ var isDOMs = function(target){
 	// return (targetType === "[object HTMLCollection]" || 
 	// targetType === "[object NodeList]" || 
 	// targetType === "[object Array]");
-	return target.length >= 0 && target !== window && target.tagName != "FORM" && target.tagName != "select";
+	//
+	//return target.length >= 0 && target !== window &&  target.tagName.toUpperCase() != "FORM" && target.tagName.toUpperCase() != "SELECT";
+	if(target === window) return false;
+	if(target.tagName){
+		var _tagName = target.tagName.toUpperCase();
+		if(_tagName == "FORM" || _tagName == "SELECT") return false;
+	}
+	return (target.length >= 0);
 };
 
 (function(win){
@@ -410,9 +417,9 @@ events.addEvent = function(target,type,fn ){
 				var _bind = null;
 				for (var i = this[ieType].length - 1; i >= 0; i--) {
 					_bind = this[ieType][i].apply(this,arguments);
-					if(_bind !== undefined) return _bind;  //若绑定的方法有return（非undefined），则return出去
+					if(_bind !== undefined) return _bind;  //若绑定的方法有return值（非undefined），则return出去
 				};
-			}	
+			}
 		}
 	}
 	if(isDOMs(target)) {
@@ -561,4 +568,6 @@ Array.prototype.Remove = function(val) {
         this.splice(index, 1);
     }
 };
+
+
 
