@@ -413,7 +413,7 @@ events.addEvent = function(target,type,fn ){
 			obj[ieType].push(fn);
 			obj["on"+type] = function(){
 				var _bind = null;
-				for (var i = this[ieType].length - 1; i >= 0; i--) {
+				for (var i = 0; i < this[ieType].length; i++) {
 					_bind = this[ieType][i].apply(this,arguments);
 					if(_bind !== undefined) return _bind;  //若绑定的方法有return值（非undefined），则return出去
 				};
@@ -566,6 +566,5 @@ Array.prototype.Remove = function(val) {
         this.splice(index, 1);
     }
 };
-
 
 
