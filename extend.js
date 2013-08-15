@@ -314,6 +314,7 @@ function deepCopy(p, c) {
 window.events = {}
 events._deleFn = {}; //保存delegate所绑定的方法	
 events._mouseFn ={}; //保存“onmouseenter”和“onmouseleave”所绑定的方法
+events._ieFunc = {}; //由于保存在ie下绑定的方法
 
 events._mouseHandle = function(fn){
 	/* 实现mouseenter/leave 的转换方法，符合条件时才会执行 */
@@ -336,7 +337,6 @@ events._delegateHandle = function(obj,elm,fn){
 		var event = event || window.event;
 		var target = event.srcElement || event.target;
 		var parent = target;
-
 		function contain(item,elmName){
 			if(elmName.split('#')[1]){ //by id
 				if(item.id && item.id === elmName.split('#')[1]) return true;
@@ -379,7 +379,7 @@ events._delegateHandle = function(obj,elm,fn){
 	return func;
 };
 
-events.addEvent = function(target,type,fn ){
+events.addEvent = function(target,type,fn){
 	if (!target) return false;
 	var add = function(obj){
 		if(obj.addEventListener){	
@@ -400,24 +400,13 @@ events.addEvent = function(target,type,fn ){
 				obj.addEventListener(type,fn,false);
 			}
 		}else{
-			// for ie ，弃用attachEvent
-			var ieType = "_" + type;
-			if(!obj[ieType]){
-				obj[ieType] = [];
-			}
-			for(var i in obj[ieType]){
-				if(obj[ieType][i] == fn){
-					return; //不重复绑定相同方法
-				}
-			}
-			obj[ieType].push(fn);
-			obj["on"+type] = function(){
-				var _bind = null;
-				for (var i = 0; i < this[ieType].length; i++) {
-					_bind = this[ieType][i].apply(this,arguments);
-					if(_bind !== undefined) return _bind;  //若绑定的方法有return值（非undefined），则return出去
-				};
-			}
+			// for ie
+			if(!events._ieFunc[obj]) events._ieFunc[obj] = {};
+			if(!events._ieFunc[obj][type]) events._ieFunc[obj][type] = {};
+			events._ieFunc[obj][type][fn] = function(){
+				fn.apply(obj);   
+			};
+			obj.attachEvent("on" + type,events._ieFunc[obj][type][fn]);
 		}
 	}
 	if(isDOMs(target)) {
@@ -429,7 +418,7 @@ events.addEvent = function(target,type,fn ){
 	}
 };
 
-events.removeEvent = function(target,type,fn ) {
+events.removeEvent = function(target,type,fn) {
 	if (!target) return false;
     var remove = function(obj){
     	if(obj.addEventListener){	
@@ -446,8 +435,10 @@ events.removeEvent = function(target,type,fn ) {
 				obj.removeEventListener(type,fn,false);
 			}
 		}else{
-			if (!obj || !obj["_"+type]) return false;
-			obj["_"+type].Remove(fn);
+			//for ie
+			if(!events._ieFunc[obj][type][fn]) return;
+			obj.detachEvent("on" + type, events._ieFunc[obj][type][fn],false);
+			events._ieFunc[obj][type][fn]={};
 		}
     }
     if(isDOMs(target)) {
@@ -566,5 +557,3 @@ Array.prototype.Remove = function(val) {
         this.splice(index, 1);
     }
 };
-
-
