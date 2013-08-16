@@ -5,7 +5,7 @@
 // +----------------------------------------------------------------------+
 // | Site: www.cssass.com
 // +----------------------------------------------------------------------+
-var UA = (function(){
+﻿var UA = (function(){
 	var ua = navigator.userAgent,
 		isIE = /msie/i.test(ua),
 		isIElt9 = (!-[1,]),
@@ -322,7 +322,7 @@ events._mouseHandle = function(fn){
 	return func;
 }
 
-events._delegateHandle = function(obj,elm,fn){
+events._delegateHandle = function(obj,selector,fn){
 	/* 实现delegate 的转换方法，符合条件时才会执行 */
 	var func = function(event){
 		var event = event || window.event;
@@ -340,25 +340,25 @@ events._delegateHandle = function(obj,elm,fn){
 		}
 
 		while(parent){
-			/* 如果触发的元素，属于绑定元素(elm)的子级。 */
+			/* 如果触发的元素，属于(selector)元素的子级。 */
 			if(obj == parent) return false; //触发元素是自己
-			if(contain(parent,elm)){
+			if(contain(parent,selector)){
 				if(event.type == 'mouseover' || event.type == 'mouseout'){
 					/* 
 					* 将mouseover/out直接处理成mouseenter/leave: 事件相关元素不属于绑定元素的子级，才绑定方法 
 					*/
 					//事件相关元素。ie下使用toElement和fromElement，其他用relatedTarget。
 					var related = event.relatedTarget || ((event.type == 'mouseout') ? event.toElement : event.fromElement); 
-					if(contain(target,elm) || contain(related,elm)) {
-						/* 如果，触发元素或相关元素属于绑定元素(elm)。执行方法 */
+					if(contain(target,selector) || contain(related,selector)) {
+						/* 如果，触发元素或相关元素属于绑定元素(selector)。执行方法 */
 						fn.call(obj,event);
 						return;
 					}
-					while( related && !contain(related,elm)){  
+					while( related && !contain(related,selector)){  
 						  related = related.parentNode; 
 					}
-					/* 事件相关元素，不属于绑定元素(elm)的子级，执行方法  */
-					!contain(related,elm) && (fn.call(obj,event));
+					/* 事件相关元素，不属于绑定元素(selector)的子级，执行方法  */
+					!contain(related,selector) && (fn.call(obj,event));
 				}else{
 					fn.call(obj,event);
 				}
@@ -441,22 +441,22 @@ events.removeEvent = function(target,type,fn) {
 	}
 };
 
-events.delegate = function(obj,elm,type,fn){
-	if (!obj || !elm) return false;
-	var fnNew = events._delegateHandle(obj,elm,fn);
+events.delegate = function(obj,selector,type,fn){
+	if (!obj || !selector) return false;
+	var fnNew = events._delegateHandle(obj,selector,fn);
 	events.addEvent(obj,type,fnNew);
 	/* 将绑定的方法存入events._deleFn，以便之后解绑操作 */
-	if(!events._deleFn[elm]) events._deleFn[elm] = {};
-	if(!events._deleFn[elm][type]) events._deleFn[elm][type] = {};
-	events._deleFn[elm][type][fn] = fnNew;
+	if(!events._deleFn[selector]) events._deleFn[selector] = {};
+	if(!events._deleFn[selector][type]) events._deleFn[selector][type] = {};
+	events._deleFn[selector][type][fn] = fnNew;
 };
 
-events.undelegate = function(obj,elm,type,fn){
-	if (!obj || !elm || !events._deleFn[elm]) return false;
-	var fnNew = events._deleFn[elm][type][fn];
+events.undelegate = function(obj,selector,type,fn){
+	if (!obj || !selector || !events._deleFn[selector]) return false;
+	var fnNew = events._deleFn[selector][type][fn];
 	if(!fnNew) return;
 	events.removeEvent(obj,type,fnNew);
-	events._deleFn[elm][type][fn] = null;
+	events._deleFn[selector][type][fn] = null;
 };
 
 
