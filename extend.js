@@ -21,18 +21,9 @@ var UA = (function(){
 })();
 
 var isDOMs = function(target){
-	// var targetType = Object.prototype.toString.call(target);
-	// return (targetType === "[object HTMLCollection]" || 
-	// targetType === "[object NodeList]" || 
-	// targetType === "[object Array]");
-	//
-	//return target.length >= 0 && target !== window &&  target.tagName.toUpperCase() != "FORM" && target.tagName.toUpperCase() != "SELECT";
-	if(target === window) return false;
-	if(target.tagName){
-		var _tagName = target.tagName.toUpperCase();
-		if(_tagName == "FORM" || _tagName == "SELECT") return false;
-	}
-	return (target.length >= 0);
+//	 var targetType = Object.prototype.toString.call(target);
+//	 return (targetType === "[object HTMLCollection]" || targetType === "[object NodeList]" ||  targetType === "[object Array]");
+	return target.length >= 0 && target !== window && !target.tagName;  //!target.tagName排除FORM,SELECT等元素
 };
 
 (function(win){
