@@ -548,3 +548,18 @@ Array.prototype.Remove = function(val) {
         this.splice(index, 1);
     }
 };
+
+/*
+*  Object常用方法兼容性扩展。
+*/
+/*  keys方法 */
+if (!Object.prototype.keys)
+{
+	Object.prototype.keys = function(obj) {
+		var arr=[];
+		for(var property in obj){
+			if(!obj.hasOwnProperty(property)) continue; //排除继承属性
+			arr.push(property);
+		}
+    };
+}
