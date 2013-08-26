@@ -553,9 +553,9 @@ Array.prototype.Remove = function(val) {
 *  Object常用方法兼容性扩展。
 */
 /*  keys方法 */
-if (!Object.prototype.keys)
+if (!Object.keys)
 {
-	Object.prototype.keys = function(obj) {
+	Object.keys = function(obj) {
 		var arr=[];
 		for(var property in obj){
 			if(!obj.hasOwnProperty(property)) continue; //排除继承属性
