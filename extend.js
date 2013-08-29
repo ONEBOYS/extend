@@ -395,7 +395,7 @@ events.addEvent = function(target,type,fn){
 			if(!events._ieFunc[obj]) events._ieFunc[obj] = {};
 			if(!events._ieFunc[obj][type]) events._ieFunc[obj][type] = {};
 			events._ieFunc[obj][type][fn] = function(){
-				fn.apply(obj);   
+				fn.apply(obj,arguments);
 			};
 			obj.attachEvent("on" + type,events._ieFunc[obj][type][fn]);
 		}
@@ -427,7 +427,7 @@ events.removeEvent = function(target,type,fn) {
 			}
 		}else{
 			//for ie
-			if(!events._ieFunc[obj][type][fn]) return;
+			if(!events._ieFunc[obj] ||!events._ieFunc[obj][type] || !events._ieFunc[obj][type][fn]) return;
 			obj.detachEvent("on" + type, events._ieFunc[obj][type][fn],false);
 			events._ieFunc[obj][type][fn]={};
 		}
@@ -561,5 +561,6 @@ if (!Object.keys)
 			if(!obj.hasOwnProperty(property)) continue; //排除继承属性
 			arr.push(property);
 		}
+		return arr;
     };
 }
