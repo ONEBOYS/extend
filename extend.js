@@ -396,6 +396,7 @@ events.addEvent = function(target,type,fn){
 			if(!events._ieFunc[obj][type]) events._ieFunc[obj][type] = {};
 			events._ieFunc[obj][type][fn] = function(){
 				fn.apply(obj,arguments);
+				return false;
 			};
 			obj.attachEvent("on" + type,events._ieFunc[obj][type][fn]);
 		}
