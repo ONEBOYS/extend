@@ -267,7 +267,26 @@ var isDOMs = function(target){
 			url += "&callback="  + callback;
 		    sendScriptRequest(url,callback);
 	  	};
-	 }
+	 };
+	 if(!win.console){
+		//ie下无console对象（防止报错）
+		var method,
+			noop = function () {},
+			methods = [
+			'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+			'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+			'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+			'timeStamp', 'trace', 'warn'
+			],
+			length = methods.length;
+		win.console = {};
+		while (length--) {
+			method = methods[length];
+			if (!win.console[method]) {
+				win.console[method] = noop;
+			}
+		}
+	}
 	
 })(window)
 
