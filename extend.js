@@ -17,7 +17,7 @@ var UA = (function(){
 		'isIElt9' : isIElt9,
 		'isIE6' : isIE6,
 		'isFF' : isFF
-	}
+	};
 })();
 
 var isDOMs = function(target){
@@ -31,7 +31,7 @@ var isDOMs = function(target){
 	win.random= function(){
 		//当前页面唯一数
 		return t++;
-	}
+	};
 	/*
 	* 一些操作DOM的方法兼容。置于window对象下
 	*/
@@ -49,9 +49,9 @@ var isDOMs = function(target){
 			for(var i=0, l = parent.length; i < l; i++){
 				var elms = get(parent[i]);
 				for (var j = elms.length - 1; j >= 0; j--) {
-					nodes.push(elms[j])
+					nodes.push(elms[j]);
 				};
-			}
+			};
 			return nodes;
 		}else{
 			return get(parent);
@@ -61,7 +61,7 @@ var isDOMs = function(target){
 		        return  parent.getElementsByClassName(className);
 		    }else{   
 		       var tag = arguments[2] || '*'; //参数3: 元素标签名，缺省为*
-		        var returnElements = []
+		        var returnElements = [];
 		        var els =  parent.getElementsByTagName(tag);
 		        className = className.replace(/\-/g, "\\-");
 		        var pattern = new RegExp("(^|\\s)"+className+"(\\s|$)");
@@ -73,9 +73,9 @@ var isDOMs = function(target){
 					i++;
 		        }
 		        return returnElements; //注意，此时返回的是数组，和原生方法返回的对象还是有差别的。
-		    }
-		}
-	}
+		    };
+		};
+	};
 
 	/*
 	 * 扩展getElementsByTagName方法，支持简单的属性选择器
@@ -96,7 +96,7 @@ var isDOMs = function(target){
 				for (var j = els.length - 1; j >= 0; j--) {
 					nodes.push(els[j]); 
 				};
-			}
+			};
 			els = nodes;
 		}else{
 			els = parent.getElementsByTagName(tagName[1]);
@@ -109,14 +109,14 @@ var isDOMs = function(target){
 				thisAttrValue = els[i].getAttribute(attrKey);
 	            if ((thisAttrValue && !attrValue) ||  thisAttrValue == attrValue) {
 	                returnElements.push(els[i]);
-	            }
+	            };
 				i++;
-	        }
+	        };
 	        return returnElements;
 		}else{
 			return els;	
-		}
-	}
+		};
+	};
 
 	/*
 	 *addClass & removeClass方法
@@ -126,7 +126,7 @@ var isDOMs = function(target){
 		if(target[0]) target = target[0];
 		var pattern = new RegExp("(^|\\s)"+className+"(\\s|$)");
 		return pattern.test(target.className);
-	}
+	};
 
 	win.addClass = function(target,className){
 		if(!target) return false;
@@ -134,36 +134,36 @@ var isDOMs = function(target){
 			if (!hasClass(o,className))
 			{
 				 o.className += " " + className;
-			}
-		}
+			};
+		};
 		if(isDOMs(target)) {
 			for(var i=0, l = target.length; i < l; i++){
-				add(target[i])
-			}
+				add(target[i]);
+			};
 		}else{
 			add(target);
-		}
-	}
+		};
+	};
 
 	win.removeClass = function(target,className){
 		if(!target) return false;
 		var pattern = new RegExp("(^|\\s)"+className+"(\\s|$)");	
 		var remove = function(o){
 			o.className = o.className.replace(pattern,'');
-		}
+		};
 		if(isDOMs(target)) {
 			/* 考虑到remove("box","box")这种情况 */
 			var arr = [];
 			for(var i = 0, l = target.length; i < l; i++ ){
 				arr.push(target[i]);
-			}
+			};
 			for(var i = 0, l = arr.length; i < l; i++ ){
 				remove(arr[i]);
-			}
+			};
 		}else{
 			remove(target);
-		}
-	}
+		};
+	};
 	
 	/*
 	 * cookie
@@ -210,12 +210,12 @@ var isDOMs = function(target){
 				rvalidbraces = /(?:^|:|,)(?:\s*\[)+/g;
 	    	if ( typeof sJSON !== "string" || !sJSON ) {
 				return null;
-			}
+			};
 			if ( rvalidchars.test(sJSON.replace(rvalidescape, "@")
 				.replace( rvalidtokens, "]" )
 				.replace( rvalidbraces, "")) ) {
 				return ( new Function( "return " + sJSON ) )();
-			}
+			};
 	    },
 	    stringify: function (vContent) {
 	      if (vContent instanceof Object) {
@@ -227,11 +227,11 @@ var isDOMs = function(target){
 	        if (vContent.toString !== Object.prototype.toString) { return "\"" + vContent.toString().replace(/"/g, "\\$&") + "\""; }
 	        for (var sProp in vContent) { sOutput += "\"" + sProp.replace(/"/g, "\\$&") + "\":" + this.stringify(vContent[sProp]) + ","; }
 	        return "{" + sOutput.substr(0, sOutput.length - 1) + "}";
-	      }
+	      };
 	      return typeof vContent === "string" ? "\"" + vContent.replace(/"/g, "\\$&") + "\"" : String(vContent);
 	    }
 	  };
-	}
+	};
 	
 	  if (!win.$jsonp) {
 		//jsonp的具体实现
@@ -286,9 +286,8 @@ var isDOMs = function(target){
 				win.console[method] = noop;
 			}
 		}
-	}
-	
-})(window)
+	};
+})(window);
 
 
 /* 浅拷贝 */
@@ -321,7 +320,7 @@ function deepCopy(p, c) {
 * events.delegate(委托元素, 触发元素, 事件类型, 方法);
 * events.undelegate(委托元素, 触发元素, 事件类型, 方法);
 */
-window.events = {}
+window.events = {};
 events._deleFn = {}; //保存delegate所绑定的方法	
 events._mouseFn ={}; //保存“onmouseenter”和“onmouseleave”所绑定的方法
 events._ieFunc = {}; //由于保存在ie下绑定的方法
@@ -333,13 +332,13 @@ events._mouseHandle = function(fn){
 		var parent = event.relatedTarget; //在onmouseover/out操作中，相关的另一个节点
 		while( parent && parent != this ){  
 			try{ parent = parent.parentNode; }
-			catch(e){break;}
-		}
+			catch(e){break;};
+		};
 		/* 只有当相关节点的父级不会是绑定的节点时（即二者不是父子的包含关系），才调用fn，否则不做处理 */
 		( parent != this ) && (fn.call(target,event));
 	};
 	return func;
-}
+};
 
 events._delegateHandle = function(obj,selector,fn){
 	/* 实现delegate 的转换方法，符合条件时才会执行 */
@@ -397,7 +396,7 @@ events.addEvent = function(target,type,fn){
 				//for opera11，firefox10。他们也支持“onmouseenter”和“onmouseleave”，可以直接绑定
 				obj.addEventListener(type,fn,false);  
 				return ;
-			}
+			};
 			if(type=="mouseenter" || type=="mouseleave" ){  
 				var eType = (type=="mouseenter") ? "mouseover" : "mouseout";
 				var fnNew = events._mouseHandle(fn);
@@ -408,7 +407,7 @@ events.addEvent = function(target,type,fn){
 					events._mouseFn[obj][eType][fn] = fnNew;
 			}else{
 				obj.addEventListener(type,fn,false);
-			}
+			};
 		}else{
 			// for ie
 			if(!events._ieFunc[obj]) events._ieFunc[obj] = {};
@@ -417,11 +416,11 @@ events.addEvent = function(target,type,fn){
 				fn.apply(obj,arguments);
 			};
 			obj.attachEvent("on" + type,events._ieFunc[obj][type][fn]);
-		}
-	}
+		};
+	};
 	if(isDOMs(target)) {
 		for(var i=0, l = target.length; i < l; i++){
-			add(target[i])
+			add(target[i]);
 		}
 	}else{
 		add(target);
@@ -450,14 +449,14 @@ events.removeEvent = function(target,type,fn) {
 			obj.detachEvent("on" + type, events._ieFunc[obj][type][fn],false);
 			events._ieFunc[obj][type][fn]={};
 		}
-    }
+   };
     if(isDOMs(target)) {
 		for(var i=0, l = target.length; i < l; i++){
-			remove(target[i])
-		}
+			remove(target[i]);
+		};
 	}else{
 		remove(target);
-	}
+	};
 };
 
 events.delegate = function(obj,selector,type,fn){
