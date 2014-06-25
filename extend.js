@@ -582,3 +582,18 @@ if (!Object.keys)
 		return arr;
     };
 }
+
+/*
+ * Flash包装器
+ */
+function FlashPlayer(wrap,url,id,wh){
+	if(!id) id = "swf"+random();
+	var wrapBox = wrap || document.body;
+	var f=(url.indexOf("?")>0?url:url+"?").split("?");
+	var u=[f.shift(),f.join("?")];
+	wh ? wh = [wh[0] + "px",wh[1] + "px"] : wh = ["100%","100%"];
+	var e = '<embed src="' + u[0] + '" name="' + id + '" pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash"  type="application/x-shockwave-flash" allownetworking="all" allowfullscreen="true" allowFullscreenInteractive="true" allowscriptaccess="always" FlashVars="' + u[1] + '" wmode="direct" width='+wh[0]+' height='+wh[1]+'"></embed>';
+	e = '<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=11,0,0,0" width="'+wh[0]+'" height="'+wh[1]+'" id="' + id + '"><param name="wmode" value="direct" ><param value="true" name="allowFullScreen"><param value="all" name="AllowNetworking"><param value="always" name="allowScriptAccess"><param name="AllowNetworking" value="all"><param value="true" name="allowFullscreenInteractive"><param name="movie" value="' + u[0] + '" ><param name="FlashVars" value="'+u[1]+'">'+e+'</object>';
+	wrapBox.insertAdjacentHTML('afterBegin',e); 
+	return document[id];
+}
