@@ -1,13 +1,13 @@
 // +----------------------------------------------------------------------+
 // | extend.js   通用扩展
 // +----------------------------------------------------------------------+
-// | Author: ONEBOYS
+// | Author: Neoxone
 // +----------------------------------------------------------------------+
 // | Site: www.cssass.com
 // +----------------------------------------------------------------------+
 var UA = (function(){
 	var ua = navigator.userAgent,
-		isIE = /msie/i.test(ua),
+		isIE = /msie|Trident/i.test(ua),
 		isIElt9 = (!-[1,]),
 		isIE6 = /msie 6/i.test(ua),
 		isFF = /firefox/i.test(ua);
@@ -391,7 +391,15 @@ events._delegateHandle = function(obj,selector,fn){
 events.addEvent = function(target,type,fn){
 	if (!target) return false;
 	var add = function(obj){
-		if(obj.addEventListener){	
+		if(target.attachEvent){
+			// for ie (ie9以上也支持addEventListener，但监测浏览器插件时候会有问题，所以采用attachEvent)
+			if(!events._ieFunc[obj]) events._ieFunc[obj] = {};
+			if(!events._ieFunc[obj][type]) events._ieFunc[obj][type] = {};
+			events._ieFunc[obj][type][fn] = function(){
+				fn.apply(obj,arguments);
+			};
+			obj.attachEvent("on" + type,events._ieFunc[obj][type][fn]);
+		}else{
 			if(obj.onmouseenter !== undefined){
 				//for opera11，firefox10。他们也支持“onmouseenter”和“onmouseleave”，可以直接绑定
 				obj.addEventListener(type,fn,false);  
@@ -408,15 +416,7 @@ events.addEvent = function(target,type,fn){
 			}else{
 				obj.addEventListener(type,fn,false);
 			};
-		}else{
-			// for ie
-			if(!events._ieFunc[obj]) events._ieFunc[obj] = {};
-			if(!events._ieFunc[obj][type]) events._ieFunc[obj][type] = {};
-			events._ieFunc[obj][type][fn] = function(){
-				fn.apply(obj,arguments);
-			};
-			obj.attachEvent("on" + type,events._ieFunc[obj][type][fn]);
-		};
+		}
 	};
 	if(isDOMs(target)) {
 		for(var i=0, l = target.length; i < l; i++){
@@ -430,8 +430,15 @@ events.addEvent = function(target,type,fn){
 events.removeEvent = function(target,type,fn) {
 	if (!target) return false;
     var remove = function(obj){
-    	if(obj.addEventListener){	
-			if(obj.onmouseenter !== undefined){
+    	if(target.attachEvent)
+	    {
+	        //for ie
+			if(!events._ieFunc[obj] ||!events._ieFunc[obj][type] || !events._ieFunc[obj][type][fn]) return;
+			obj.detachEvent("on" + type, events._ieFunc[obj][type][fn],false);
+			events._ieFunc[obj][type][fn]={};
+	    }else if(target.addEventListener)
+	    {
+	        if(obj.onmouseenter !== undefined){
 				obj.removeEventListener(type,fn,false);  
 				return ;
 			}
@@ -443,12 +450,7 @@ events.removeEvent = function(target,type,fn) {
 			}else{
 				obj.removeEventListener(type,fn,false);
 			}
-		}else{
-			//for ie
-			if(!events._ieFunc[obj] ||!events._ieFunc[obj][type] || !events._ieFunc[obj][type][fn]) return;
-			obj.detachEvent("on" + type, events._ieFunc[obj][type][fn],false);
-			events._ieFunc[obj][type][fn]={};
-		}
+	    }
    };
     if(isDOMs(target)) {
 		for(var i=0, l = target.length; i < l; i++){
