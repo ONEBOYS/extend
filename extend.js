@@ -10,13 +10,15 @@ var UA = (function() {
 		isIE = /msie|Trident/i.test(ua),
 		isIElt9 = (!-[1, ]),
 		isIE6 = /msie 6/i.test(ua),
-		isFF = /firefox/i.test(ua);
+		isFF = /firefox/i.test(ua),
+		isMobile = /(iPhone|iPod|Android|ios|iOS|iPad|Backerry|WebOS|Symbian|Windows Phone|Phone)/i.test(ua);
 	return {
 		'ua': ua,
 		'isIE': isIE,
 		'isIElt9': isIElt9,
 		'isIE6': isIE6,
-		'isFF': isFF
+		'isFF': isFF,
+		'isMobile' : isMobile
 	};
 })();
 
