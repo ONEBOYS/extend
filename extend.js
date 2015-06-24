@@ -18,7 +18,7 @@ var UA = (function() {
 		'isIElt9': isIElt9,
 		'isIE6': isIE6,
 		'isFF': isFF,
-		'isMobile' : isMobile
+		'isMobile': isMobile
 	};
 })();
 
@@ -780,4 +780,8 @@ function getParms() {
 		arrHash[arr[i].split("=")[0]] = unescape(arr[i].split("=")[1]);
 	}
 	return arrHash;
+};
+
+var getStyle = function(el, style) {
+	return document.defaultView ? document.defaultView.getComputedStyle(el, null).getPropertyValue(style) : el.currentStyle[style];
 };
